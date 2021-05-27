@@ -107,16 +107,8 @@ You should keep track of the version of the versions for all the software you in
     {
         input {
             jdbc {
-                jdbc_driver_library => "mssql-jdbc-[jdbc-version].jre8.jar"
-                jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-                jdbc_connection_string => "jdbc:sqlserver://localhost:1433;database=master;integratedSecurity=true;"
-                jdbc_user => ""
-                schedule => "* * * * *"
-                statement => "SELECT Id, League, Amount, Odds FROM BetTickerTest WHERE Id > :sql_last_value"
-                use_column_value => true
-                tracking_column => "date"
-                tracking_column_type => "timestamp"
-                last_run_metadata_path => "C:/Elastic/logstash/temp/.logstash_jdbc_last_run"
+                path => "C:\\elastic\\test\\test.db"
+                type => logWatcherTest
             }
         }
         output {
@@ -138,15 +130,28 @@ You should keep track of the version of the versions for all the software you in
    2. run bin\\logstash
 2. Don't close the window until you are finished with playing around.
 
+### Sqlite
+
+1. Create a new folder new folder "test" within "C:\\elastic".
+2. Create a new file called "test.db" within "C:\\elastic\\test".
+3. Execute the following command in command prompt.
+   - > Sqlite3.exe C:/elastic/test/test.db
+4. Execute the below create table statement within your sqlite session
+   - > CREATE TABLE logWatcherTest (Id INTEGER PRIMARY KEY AUTOINCREMENT, Item VARCHAR NOT NULL, Price NUMERIC NOT NULL);
+
 ### HTML Websocket Client
 
-placeholder
+1. Download the WebSocket Application from the github repository
+2. Open the index.html file in a browser and leave it
 
 ### Running the Demo
 
-{ "open": "current sqlite instance" },
-{ "run_command": "INSERT INTO BetTickerTest (Amount, Odds, League) VALUES (\"12,2\", \"36,12\", \"Super Rugby\");" },
-{ "Finally": "check your logstash output for the row that you just inserted" }
+1. Open your current sqlite
+2. Execute the following command in command prompt
+   - > Sqlite3.exe C:/elastic/test/test.db
+3. Run the following in the above session
+   - > INSERT INTO LogWatcherTest (Item, Price) VALUES (\"Makita Drill\", \"12,2\");
+4. Finally check your logstash output for the row that was just inserted as well as your browser for a new line within the site.
 
 ## Alternative (Sqlite)
 
@@ -218,16 +223,5 @@ placeholder
 //     }
 // }"
         ],
-        "sqlite": [
-            { "create": "test.db in C:\\elastic\\test" },
-            { "run": "Sqlite3.exe C:/elastic/test/test.db" }, 
-            { "run_command": "CREATE TABLE BetTickerTest (Id INTEGER PRIMARY KEY AUTOINCREMENT, Amount NUMERIC NOT NULL, Odds NUMERIC NOT NULL, League VARCHAR NOT NULL);" },
-            "dont_close_window"
-        ],
-        "test": [
-            { "open": "current sqlite instance" },
-            { "run_command": "INSERT INTO BetTickerTest (Amount, Odds, League) VALUES (\"12,2\", \"36,12\", \"Super Rugby\");" },
-            { "Finally": "check your logstash output for the row that you just inserted" }
-        ]
     }
 }
