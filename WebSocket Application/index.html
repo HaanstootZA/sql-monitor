@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type = "text/javascript">
+      let socket = new WebSocket("wss://localhost:3232");
+
+      socket.onopen = function(e) {
+        addMessage('open', 'Connection established');
+        addMessage('open', 'Sending to server');
+      };
+
+      socket.onmessage = function(event) {
+        addMessage('message', `Data received from server: ${event.data}`);
+      };
+
+      socket.onclose = function(event) {
+        if (event.wasClean) {
+          addMessage('close', `Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+        } else {
+          // e.g. server process killed or network down
+          // event.code is usually 1006 in this case
+          addMessage('close', 'Connection died');
+        }
+      };
+
+      socket.onerror = function(error) {
+        addMessage('error', error.message);
+      };
+
+      function addMessage(messageType, message){
+        var div = document.getElementById('content');
+        var paragraph = document.createElement('p');
+        paragraph.appendChild(document.createTextNode(`[${messageType}]: ${message}`));
+        div.appendChild(tag);
+      }
+    </script>
+  </head>
+    <body>
+      <div id="content">
+
+      </div>
+    </body>
+  </html>

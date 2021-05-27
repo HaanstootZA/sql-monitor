@@ -138,12 +138,15 @@ You should keep track of the version of the versions for all the software you in
    2. run bin\\logstash
 2. Don't close the window until you are finished with playing around.
 
-### "html_websocket_client": {},
-    "test": [
-        { "open": "current sqlite instance" },
-        { "run_command": "INSERT INTO BetTickerTest (Amount, Odds, League) VALUES (\"12,2\", \"36,12\", \"Super Rugby\");" },
-        { "Finally": "check your logstash output for the row that you just inserted" }
-    ]
+### HTML Websocket Client
+
+placeholder
+
+### Running the Demo
+
+{ "open": "current sqlite instance" },
+{ "run_command": "INSERT INTO BetTickerTest (Amount, Odds, League) VALUES (\"12,2\", \"36,12\", \"Super Rugby\");" },
+{ "Finally": "check your logstash output for the row that you just inserted" }
 
 ## Alternative (Sqlite)
 
