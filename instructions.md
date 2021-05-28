@@ -42,7 +42,7 @@
 
 ## Preparing the environment
 
-You should keep track of the version of the versions for all the software you install.
+You should keep track of the versions for all the software you install so that you can use it in the paths below.
 
 ### Installing Java
 
@@ -78,7 +78,9 @@ You should keep track of the version of the versions for all the software you in
 
 1. Download the MySQL windows installer from <https://dev.mysql.com/downloads/installer/>
 2. Run the downloaded installer
-   - Choose Developer Default as your option
+   - Choose Developer Default as your option.
+   - Wait for the installation to ask you for a username and password.
+   - Set your root user password to "password".
 
 ### Installing the JDBC Connector
 
@@ -96,7 +98,6 @@ You should keep track of the version of the versions for all the software you in
    - > C:\\Elastic\\logstash-[version]\\config\\pypelines.yml
 2. Create the following files
    - > C:\\Elastic\\logstash-[version]\\config\\example.mysql.cfg
-   - > C:\\Elastic\\logstash-[version]\\config\\example.sqlite.stdout.cfg
 3. Replace the contents of the files like this
 
 | File | Content |
@@ -107,9 +108,16 @@ You should keep track of the version of the versions for all the software you in
     {
         input {
             jdbc {
-                path => "C:\\elastic\\test\\test.db"
-                type => logWatcherTest
+                jdbc_driver_library => "mssql-jdbc-[jdbc-version].jre8.jar"
+                jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+                jdbc_connection_string => "jdbc:sqlserver://localhost:1433;database=master;Uid=root;Pwd=password;"
+                schedule => "*/3 * * * * *"
+                statement => "SELECT Id, Item, Price FROM LogWatcherTest WHERE Id > :sql_last_value"
+                tracking_column => "id"
+                use_column_value => true
+                last_run_metadata_path => "C:/Elastic/logstash/temp/.logstash_jdbc_last_run"
             }
+            
         }
         output {
             websocket {
@@ -130,6 +138,86 @@ You should keep track of the version of the versions for all the software you in
    2. run bin\\logstash
 2. Don't close the window until you are finished with playing around.
 
+### HTML Websocket Client
+
+1. Download the WebSocket Application from the github repository
+2. Open the index.html file in a browser and leave it
+
+### Running the Demo
+
+1. Open your current sqlite
+2. Run the following in the above session
+   - > INSERT INTO LogWatcherTest (Item, Price) VALUES (\"Makita Drill\", \"12,2\");
+3. Finally check your logstash output for the row that was just inserted as well as your browser for a new line within the site.
+
+## Alternative Method using Sqlite
+
+> Try as I might I was unable to get the Sqlite plugin working, and couldnt find a solution online
+
+### Preparing
+
+"Sqlite": {
+    "DLL_Files": [
+        { "download": "https://sqlite.org/2019/sqlite-dll-win64-x64-3270100.zip" },
+        { "unzip_destination": "C:\\Sqlite" }
+    ],
+    "Tools": [
+        { "download": "https://sqlite.org/2019/sqlite-tools-win32-x86-3270100.zip" },
+        { "unzip_destination": "C:\\Sqlite" }
+    ],
+    "environment_variables": [
+        { "PATH": "C:\\Sqlite" }
+    ],
+    "test": [
+        "open_command_line",
+        "sqlite3.exe"
+    ]
+}
+
+"sqlite_jdbc_driver": {
+    "install": [
+        { "download": "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.23.1.jar" },
+        { "unzip_destination": "C:\\Common\\jdbc\\sqlitejdbc_3.23.1" }
+    ],
+    "environment_variables": [
+        { "CLASSPATH": "C:\\Common\\jdbc\\sqlitejdbc_3.23.1\\sqlite-jdbc-3.23.1.jar" }
+    ]
+}
+
+"mssql_jdbc_driver"
+    "install": [
+        { "download": "https://docs.microsoft.com/en-us/sql/connect/jdbc/download-microsoft-jdbc-driver-for-sql-server?view=sql-server-2017" },
+        { "unzip_destination": "C:\\Common\\jdbc\\sqljdbc_7.2\\enu" },
+        { "note": "specified in <https://docs.microsoft.com/en-us/sql/connect/jdbc/using-the-jdbc-driver?view=sql-server-2017>" }
+    ],
+    "environment_variables": [
+        { "CLASSPATH": "C:\\Common\\jdbc\\sqljdbc_7.2\\enu\\mssql-jdbc-7.2.0.jre8.jar" }
+    ]
+
+2. Create the following files
+   - > C:\\Elastic\\logstash-[version]\\config\\example.mysql.cfg
+   - > C:\\Elastic\\logstash-[version]\\config\\example.sqlite.stdout.cfg
+
+"set_content"
+    { "C:\\Elastic\\logstash-6.6.0\\config\\pipelines.yml": "- pipeline.id: example-sqlite-pipeline\\npath.config: config/example.sqlite.cfg\\npipeline.workers: 1" },
+    { "C:\\Elastic\\logstash-6.6.0\\config\\example.sqlite.stdout.cfg": "" }
+    "{
+        input {
+            jdbc: {
+                    path => "C:\\elastic\\test\\test.db"
+                    type => logWatcherTest
+            }
+        },
+        output {
+            websocket => {
+                id => "sqlite_web_socket_output_id",
+                host => "0.0.0.0",
+                port => "3232",
+                codec => "json",
+            }
+        }
+    }"
+
 ### Sqlite
 
 1. Create a new folder new folder "test" within "C:\\elastic".
@@ -139,12 +227,7 @@ You should keep track of the version of the versions for all the software you in
 4. Execute the below create table statement within your sqlite session
    - > CREATE TABLE logWatcherTest (Id INTEGER PRIMARY KEY AUTOINCREMENT, Item VARCHAR NOT NULL, Price NUMERIC NOT NULL);
 
-### HTML Websocket Client
-
-1. Download the WebSocket Application from the github repository
-2. Open the index.html file in a browser and leave it
-
-### Running the Demo
+### Running the Alternative Demo
 
 1. Open your current sqlite
 2. Execute the following command in command prompt
@@ -152,76 +235,3 @@ You should keep track of the version of the versions for all the software you in
 3. Run the following in the above session
    - > INSERT INTO LogWatcherTest (Item, Price) VALUES (\"Makita Drill\", \"12,2\");
 4. Finally check your logstash output for the row that was just inserted as well as your browser for a new line within the site.
-
-## Alternative (Sqlite)
-
-"note": "Try as I might I was unable to get the Sqlite plugin working, and couldnt find a solution online",
-    "alternate": {
-        "preparations": {
-            "Sqlite": {
-                "DLL_Files": [
-                    { "download": "https://sqlite.org/2019/sqlite-dll-win64-x64-3270100.zip" },
-                    { "unzip_destination": "C:\\Sqlite" }
-                ],
-                "Tools": [
-                    { "download": "https://sqlite.org/2019/sqlite-tools-win32-x86-3270100.zip" },
-                    { "unzip_destination": "C:\\Sqlite" }
-                ],
-                "environment_variables": [
-                    { "PATH": "C:\\Sqlite" }
-                ],
-                "test": [
-                    "open_command_line",
-                    "sqlite3.exe"
-                ]
-            },
-            "sqlite_jdbc_driver": {
-                "install": [
-                    { "download": "https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.23.1.jar" },
-                    { "unzip_destination": "C:\\Common\\jdbc\\sqlitejdbc_3.23.1" }
-                ],
-                "environment_variables": [
-                    { "CLASSPATH": "C:\\Common\\jdbc\\sqlitejdbc_3.23.1\\sqlite-jdbc-3.23.1.jar" }
-                ]
-            },
-            "mssql_jdbc_driver": {
-                "install": [
-                    { "download": "https://docs.microsoft.com/en-us/sql/connect/jdbc/download-microsoft-jdbc-driver-for-sql-server?view=sql-server-2017" },
-                    { "unzip_destination": "C:\\Common\\jdbc\\sqljdbc_7.2\\enu" },
-                    { "note": "specified in <https://docs.microsoft.com/en-us/sql/connect/jdbc/using-the-jdbc-driver?view=sql-server-2017>" }
-                ],
-                "environment_variables": [
-                    { "CLASSPATH": "C:\\Common\\jdbc\\sqljdbc_7.2\\enu\\mssql-jdbc-7.2.0.jre8.jar" }
-                ]
-            }
-        },
-        "set_content": [
-            { "C:\\Elastic\\logstash-6.6.0\\config\\pipelines.yml": "- pipeline.id: example-sqlite-pipeline\\npath.config: config/example.sqlite.cfg\\npipeline.workers: 1" },
-            { "C:\\Elastic\\logstash-6.6.0\\config\\example.sqlite.stdout.cfg": "" }
-// "{
-//     input {
-//         jdbc: {
-//             jdbc_driver_library => "mssql-jdbc-7.2.0.jre8.jar"
-//             jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-//             jdbc_connection_string => "jdbc:sqlserver://localhost:1433;database=master;integratedSecurity=true;"
-//             jdbc_user => ""
-//             schedule => "* * * * *"
-//             statement => "SELECT Id, League, Amount, Odds FROM BetTickerTest WHERE Id > :sql_last_value"
-//             use_column_value => true
-//             tracking_column => "date"
-//             tracking_column_type => "timestamp"
-//             last_run_metadata_path => "C:/Elastic/logstash/temp/.logstash_jdbc_last_run"
-//         }
-//     },
-//     output {
-//         websocket => {
-//             id => "sqlite_web_socket_output_id",
-//             host => "0.0.0.0",
-//             port => "3232",
-//             codec => "json",
-//         }
-//     }
-// }"
-        ],
-    }
-}
