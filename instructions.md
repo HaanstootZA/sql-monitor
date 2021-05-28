@@ -25,14 +25,16 @@
 1. run the 'rundll32 sysdm.cpl,EditEnvironmentVariables' command.
     1. Adding a new value
         1. new
-        2. enter variable name
-        3. enter variable value
-    2. Appending an item to an existing value
+        2. enter variable name.
+        3. enter variable value.
+    2. Appending an item to an existing value.
         1. open the existing item.
         2. append a semicolon  (';') and the value you want to add to the existing text.
-2. Click the "OK" button
+2. Click the "OK" button.
 
 ### Linux v Windows
+
+A lot of open source applications are written with Linux in mind so it's usefull to know some of the differences you might face when it comes to configuration.
 
 |  | Linux | Windows |
 | --- | --- | --- |
@@ -46,48 +48,47 @@ You should keep track of the versions for all the software you install so that y
 
 ### Installing Java
 
-1. Download the jre8 installer from <https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html>
-   - Recently Oracle change the requirements for Java and they require that you create an account
-2. Run the downloaded java installer
-3. Set the following Environment Variables
-    1. Create/Replace "JAVA_HOME" with "C:\\Program Files\\Java\\jre[version]" (or the latest installation path for Java)
-    2. Append "PATH" with "JAVA_HOME\\bin"
-4. Testing Java
-   1. Run the following command within the command line
+1. Download the jre8 installer from <https://download.java.net/openjdk/jdk11/ri/openjdk-11+28_windows-x64_bin.zip>.
+2. Extract the contents of the folder to C:\\Program Files\\Java\\.
+3. Set the following Environment Variables.
+    1. Create/Replace "JAVA_HOME" with "C:\\Program Files\\Java\\jdk-11" (or the latest installation path for Java).
+    2. Append "PATH" with "JAVA_HOME\\bin".
+4. Testing Java.
+   1. Run the following command within the command line.
       - > java -version
-   2. You should see the text
+   2. You should see the text.
       - > java version and the Java Version you installed
 
 ### Installing Logstash for Windows
 
-1. Download the logstash installer from <https://www.elastic.co/downloads/logstash-oss>
-2. To install logstash follow these steps
-   1. Create  the folder "C:\\Elastic"
-   2. Unzip the contents of the downloaded file into "C:\\Elastic"
-   3. You should see the following folder "C:\\Elastic\\logstash-[version]"
-3. Install the websocket plugin by executing the following command
+1. Download the logstash installer from <https://www.elastic.co/downloads/logstash-oss>.
+2. To install logstash follow these steps.
+   1. Create  the folder "C:\\Elastic".
+   2. Unzip the contents of the downloaded file into "C:\\Elastic".
+   3. You should see the following folder "C:\\Elastic\\logstash-[version]".
+3. Install the websocket plugin by executing the following command.
    - > C:\\Elastic\\logstash-[version]\\bin\\logstash-plugin install logstash-output-websocket
-4. Testing your installation
-   1. Open command line
-   2. Navigate to the new folder you created by executing the following command
+4. Testing your installation.
+   1. Open command line.
+   2. Navigate to the new folder you created by executing the following command.
       - > cd C:\\Elastic\\logstash-[version]
-   3. Execute the following command
+   3. Execute the following command.
       - > bin\\logstash -e "input { stdin {} } output { stdout {} }"
 
 ### Installing MySql
 
-1. Download the MySQL windows installer from <https://dev.mysql.com/downloads/installer/>
-2. Run the downloaded installer
+1. Download the MySQL windows installer from <https://dev.mysql.com/downloads/installer/>.
+2. Run the downloaded installer.
    - Choose Developer Default as your option.
    - Wait for the installation to ask you for a username and password.
    - Set your root user password to "password".
 
 ### Installing the JDBC Connector
 
-1. Download the JDBC connector from <https://go.microsoft.com/fwlink/?linkid=2155948>
-2. Create a new folder "C:\\SQL JDBC"
-3. Unzip the contents of the download into "C:\\SQL JDBC"
-4. Copy the following file
+1. Download the JDBC connector from <https://go.microsoft.com/fwlink/?linkid=2155948>.
+2. Create a new folder "C:\\SQL JDBC".
+3. Unzip the contents of the download into "C:\\SQL JDBC".
+4. Copy the following file.
    - From "C:\\SQL JDBC\\sqljdbc_[version]\\enu\\auth\\x86\\sqljdbc_auth.dll"
    - To "%JAVA_HOME%\\bin"
 
@@ -100,24 +101,29 @@ You should keep track of the versions for all the software you install so that y
    - > C:\\Elastic\\logstash-[version]\\config\\example.mysql.cfg
 3. Replace the contents of the files like this
 
-| File | Content |
-| --- | --- |
-| C:\\Elastic\\logstash-[version]\\config\\logstash.yml | log.level : info |
-| C:\\Elastic\\logstash-[version]\\config\\pipelines.yml | - pipeline.id: example-mysql-pipeline\\npath.config: config/example.mysql.cfg\\npipeline.workers: 1 |
-| C:\\Elastic\\logstash-[version]\\config\\example.mysql.stdout.cfg | see below |
-    {
+- C:\\Elastic\\logstash-[version]\\config\\logstash.yml
+  >log.level : info
+- C:\\Elastic\\logstash-[version]\\config\\pipelines.yml
+
+        - pipeline.id: example-mysql-pipeline
+          path.config: config/example.mysql.cfg
+          pipeline.workers: 1
+
+- C:\\Elastic\\logstash-[version]\\config\\example.mysql.stdout.cfg
+
         input {
             jdbc {
-                jdbc_driver_library => "mssql-jdbc-[jdbc-version].jre8.jar"
+                jdbc_driver_library => "mssql-jdbc-[jdbc-version].jre11.jar"
                 jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"
-                jdbc_connection_string => "jdbc:sqlserver://localhost:1433;database=master;Uid=root;Pwd=password;"
-                schedule => "*/3 * * * * *"
+                jdbc_connection_string => "jdbc:sqlserver://localhost:1433;database=master;uid=root;pwd=password;"
+                jdbc_user => "root"
+                jdbc_password => "password"
+                schedule => "**/3 * * * * *"
                 statement => "SELECT Id, Item, Price FROM LogWatcherTest WHERE Id > :sql_last_value"
                 tracking_column => "id"
                 use_column_value => true
                 last_run_metadata_path => "C:/Elastic/logstash/temp/.logstash_jdbc_last_run"
             }
-            
         }
         output {
             websocket {
@@ -127,7 +133,6 @@ You should keep track of the versions for all the software you install so that y
                 codec => "json"
             }
         }
-    }
 
 ## Executing the applications
 
@@ -140,8 +145,8 @@ You should keep track of the versions for all the software you install so that y
 
 ### HTML Websocket Client
 
-1. Download the WebSocket Application from the github repository
-2. Open the index.html file in a browser and leave it
+1. Download the WebSocket Application from the github repository.
+2. Open the index.html file in a browser and leave it running.
 
 ### Running the Demo
 
