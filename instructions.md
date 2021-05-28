@@ -97,6 +97,8 @@ You should keep track of the versions for all the software you install so that y
 1. Backup the following files (copy-paste and rename the extensions to .bak)
    - > C:\\Elastic\\logstash-[version]\\config\\logstash.yml
    - > C:\\Elastic\\logstash-[version]\\config\\pypelines.yml
+   - > C:\\Elastic\\logstash-[version]\\Gemfile.lock
+   - > C:\\Elastic\\logstash-[version]\\Gemfile
 2. Create the following files
    - > C:\\Elastic\\logstash-[version]\\config\\example.mysql.cfg
 3. Replace the contents of the files like this
@@ -133,6 +135,8 @@ You should keep track of the versions for all the software you install so that y
                 codec => "json"
             }
         }
+
+-  For C:\\Elastic\\logstash-[version]\\Gemfile use the gemfile within this repository
 
 ## Executing the applications
 
