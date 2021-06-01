@@ -14,7 +14,7 @@
 
 #### Run Application/Command
 
-1. "open_command_line"
+1. Open Command Line
 2. type `<COMMAND TEXT>
 3. press enter
 
@@ -34,11 +34,11 @@
 
 ### Linux v Windows
 
-A lot of open source applications are written with Linux in mind so it's usefull to know some of the differences you might face when it comes to configuration.
+A lot of open source applications are written with Linux in mind so it's useful to know some of the differences you might face when it comes to configuration.
 
 |  | Linux | Windows |
 | --- | --- | --- |
-| Path Seperators | backslash '/' | forwardslash '\' |
+| Path Separators | backslash '/' | forward slash '\' |
 | Quotation Marks | single quotes ' ' | double quotes " " |
 | Closing Console Applications | CTRL+D | CTRL+C |
 
@@ -57,29 +57,6 @@ You should keep track of the versions for all the software you install so that y
       - > java -version
    4. You should see the text.
       - > java version and the Java Version you installed
-
-### MySql
-
-#### Installation
-
-1. Download the MySQL windows installer from <https://dev.mysql.com/downloads/installer/>.
-2. Run the downloaded installer.
-   - Choose Developer Default as your option.
-   - Wait for the installation to ask you for a username and password.
-   - Set your root user password to "password".
-3. Copy the JDBC driver file
-   - From
-    > C:\Program Files (x86)\MySQL\Connector J 8.0\mysql-connector-java-8.0.25.jar
-   - To
-    > C:\Elastic\logstash-7.13.0\jdk\connectors
-4. Open an instance of MySQL Workbench.
-5. Execute the below create table statement within your sqlite session.
-
-    CREATE TABLE sys.`logWatcherTest` (
-        `Id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        `Item` VARCHAR(255) NOT NULL,
-        `Price` DECIMAL(19, 3) NOT NULL
-    );
 
 ### Logstash for Windows
 
@@ -142,13 +119,36 @@ You should keep track of the versions for all the software you install so that y
             }
         }
 
-### Running the websocket Plugin
+### Running the WebSocket Plugin
 
 1. Add the below line to the end of the "C:\\Elastic\\logstash-[version]\\Gemfile" file
     > gem "logstash-output-websocket", :path => "./logstash-output-websocket"
 2. Copy the logstash-output-websocket folder from <https://github.com/HaanstootZA/sql-monitor/tree/main/logstash> into "C:\\Elastic\\logstash-[version]"
 3. Within your logstash folder run the following commands within command prompt
     > bin/logstash-plugin install --no-verify
+
+### MySQL
+
+#### Installation
+
+1. Download the MySQL windows installer from <https://dev.mysql.com/downloads/installer/>.
+2. Run the downloaded installer.
+   - Choose Developer Default as your option.
+   - Wait for the installation to ask you for a username and password.
+   - Set your root user password to "password".
+3. Copy the JDBC driver file
+   - From
+    > C:\Program Files (x86)\MySQL\Connector J 8.0\mysql-connector-java-8.0.25.jar
+   - To
+    > C:\Elastic\logstash-7.13.0\jdk\connectors
+4. Open an instance of MySQL Workbench.
+5. Execute the below create table statement within your sqlite session.
+
+    CREATE TABLE sys.`logWatcherTest` (
+        `Id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        `Item` VARCHAR(255) NOT NULL,
+        `Price` DECIMAL(19, 3) NOT NULL
+    );
 
 ## Executing the applications
 
@@ -159,7 +159,7 @@ You should keep track of the versions for all the software you install so that y
    2. run bin\\logstash
 2. Don't close the window until you are finished with playing around.
 
-### HTML Websocket Client
+### HTML WebSocket Client
 
 1. Download the WebSocket Application from the github repository.
 2. Open the index.html file in a browser and leave it running.
