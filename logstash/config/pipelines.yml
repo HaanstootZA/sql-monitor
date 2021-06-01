@@ -1,0 +1,3 @@
+- pipeline.id: example-mysql-pipeline
+  path.config: config/example.mysql.cfg
+  pipeline.workers: 1

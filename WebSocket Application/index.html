@@ -1,43 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+  <title>Sql Monitor Demo</title>
   <head>
+    <style>
+      th, td {
+        padding: 5px;
+      }
+    </style>
     <script type = "text/javascript">
-      let socket = new WebSocket("wss://localhost:3232");
+      let socket = new WebSocket("ws://localhost:3232");
 
       socket.onopen = function(e) {
-        addMessage('open', 'Connection established');
-        addMessage('open', 'Sending to server');
+        addLog('connection open', 'Connection established');
+        addLog('connection open', 'Sending to server');
       };
 
-      socket.onmessage = function(event) {
-        addMessage('message', `Data received from server: ${event.data}`);
+      socket.onmessage = function(event) {  
+        const obj = JSON.parse(event.data);
+        addLog('data recieved', event.data);
+
+        const rowItemId = document.createElement('td')
+        const rowItemItem = document.createElement('td')
+        const rowItemPrice = document.createElement('td')
+        rowItemId.innerText = obj.id;
+        rowItemItem.innerText = obj.item;
+        rowItemPrice.innerText = obj.price;
+
+        const row = document.createElement('tr');
+        row.appendChild(rowItemId)
+        row.appendChild(rowItemItem)
+        row.appendChild(rowItemPrice)
+
+        const table = document.getElementById('content');
+        table.children['tbody']
+        table.appendChild(row);
       };
 
       socket.onclose = function(event) {
         if (event.wasClean) {
-          addMessage('close', `Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+          addLog('connection closed', `Connection closed cleanly, code=${event.code} reason=${event.reason}`);
         } else {
           // e.g. server process killed or network down
           // event.code is usually 1006 in this case
-          addMessage('close', 'Connection died');
+          addLog('connection closed', 'Connection died');
         }
       };
 
       socket.onerror = function(error) {
-        addMessage('error', error.message);
+        addLog('connection error', error.message);
       };
 
-      function addMessage(messageType, message){
-        var div = document.getElementById('content');
-        var paragraph = document.createElement('p');
-        paragraph.appendChild(document.createTextNode(`[${messageType}]: ${message}`));
-        div.appendChild(tag);
+      function addLog(messageType, message){
+        const div = document.getElementById('log');
+        div.appendChild(document.createTextNode(`[${messageType}]: ${message}`));
+        div.appendChild(document.createElement('br'));
       }
     </script>
   </head>
     <body>
-      <div id="content">
-
+      <div id="log">
+        <h1>Log</h1>
+      </div>
+      <div>
+        <h1>Data</h1>
+        <table id="content">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Lastname</th>
+              <th>Age</th>
+            </tr>
+          </thead>
+        </table>
       </div>
     </body>
   </html>
