@@ -190,7 +190,7 @@ You should keep track of the versions for all the software you install so that y
 
 1. Download the Sqlite JDBC driver from <https://bitbucket.org/xerial/sqlite-jdbc/downloads/sqlite-jdbc-3.23.1.jar>
 2. Extract the content of the file to "C:\\Common\\jdbc\\sqlitejdbc_3.23.1"
-3. Set or Append the "CLASSPATH" environment wit "C:\\Common\\jdbc\\sqlitejdbc_3.23.1\\sqlite-jdbc-3.23.1.jar" }
+3. Set or Append the "CLASSPATH" and "PATH" environment wit "C:\\Common\\jdbc\\sqlitejdbc_3.23.1\\sqlite-jdbc-3.23.1.jar"
 
 #### Configurating Sqlite
 
